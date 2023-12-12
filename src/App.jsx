@@ -1,5 +1,7 @@
 import "./App.css";
 import Keypad from "./components/keypad/Keypad";
+import PayScreen from "./components/payScreen/PayScreen";
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   const containerStyle = {
@@ -13,8 +15,13 @@ function App() {
   }
 
   return (
-    <div style={containerStyle} className="container">
-      <Keypad />
+    <div style={containerStyle}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Keypad />} />
+          <Route path="/payScreen" element={<PayScreen />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

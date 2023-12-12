@@ -15,6 +15,7 @@ const Keypad = () => {
 
   const handleConfirmClick = () => {
     console.log('Entered price:', price);
+    location.hash = '#/payScreen'; 
   };
 
   const inputStyle = {
@@ -93,7 +94,7 @@ const Keypad = () => {
       </Row>
       <Row gutter={[8, 8]}>
         <Col span={8}>
-          <Button block style={backButtonStyle} size={'large'} onClick={handleClearClick}>Clear</Button>
+          <Button block style={backButtonStyle} size={'large'} onClick={handleClearClick}>Back</Button>
         </Col>
         <Col span={8}>
           <Button block style={buttonStyle} size={'large'} onClick={() => handleNumberClick('0')}>0</Button>
