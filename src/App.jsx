@@ -1,6 +1,7 @@
 import "./App.css";
 import Keypad from "./components/keypad/Keypad";
 import PayScreen from "./components/payScreen/PayScreen";
+import Settings from "./components/settings/Settings";
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Keypad />} />
           <Route path="/payScreen" element={<PayScreen />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </Router>
     </div>
