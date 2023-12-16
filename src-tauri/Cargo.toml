@@ -16,6 +16,15 @@ tauri-build = { version = "1.5", features = [] }
 tauri = { version = "1.5", features = ["shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+solana-sdk = "1.17.11"
+sha3 = "0.10.8"
+ring = "0.17.7"
+solana-client = "1.17.11"
+clap = "4.4.11"
+chrono = "0.4.31"
+tiny-bip39 = "0.8.0"  
+zeroize = "^1.0.0"
+solana-program = "1.17.11"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
