@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Input, List, Card } from 'antd';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, EditOutlined } from '@ant-design/icons';
 import { invoke } from '@tauri-apps/api/tauri';
 
-const data = [
+const pages = [
   {
     title: 'Language',
-    path: '/#/settings/language',
+    path: '#/settings/language',
+    hook: 'language',
   },
   {
     title: 'Currency',
-    path: '/#/settings/currency',
+    path: '#/settings/currency',
+    hook: 'currency',
   },
   {
     title: 'Private Key',
-    path: '/#/settings/private-key',
+    path: '#/settings/private-key',
+    hook: 'privateKey',
+
   },
 ];
 
@@ -27,9 +31,18 @@ const Settings = () => {
   });
 
   useEffect(() => {
-    invoke('get_settings').then(savedSettings => {
-      if (savedSettings) {
-        setSettings(savedSettings);
+    // invoke('get_settings').then(savedSettings => {
+    //   if (savedSettings) {
+    //     setSettings(savedSettings);
+    //   }
+    // });
+
+    invoke('get_language').then(savedLanguage => {
+      if (savedLanguage) {
+        setSettings(prevSettings => ({
+          ...prevSettings,
+          language: savedLanguage,
+        }));
       }
     });
   }, []);
@@ -41,6 +54,10 @@ const Settings = () => {
   const onFinish = (values) => {
     setSettings(values);
   };
+
+  const handleClick = (path) => {
+    location.hash = path;
+  }
 
   const goBack = () => {
     location.hash = '#/';
@@ -59,11 +76,14 @@ const Settings = () => {
       <h1 style={{ color: 'black' }}>Settings</h1>
       <List
         grid={{ gutter: 16, column: 1 }}
-        dataSource={data}
+        dataSource={pages}
         renderItem={item => (
           <List.Item>
-            <Card title={item.title} onClick={() => handleClick(item.path)}>
-              {item.title}
+            <Card 
+              title={item.title} 
+              onClick={() => handleClick(item.path)}
+              extra={<Button icon={<EditOutlined />}/>}>
+              {settings[item.hook]}
             </Card>
           </List.Item>
         )}
