@@ -4,6 +4,7 @@ import PayScreen from "./components/payScreen/PayScreen";
 import Settings from "./components/settings/Settings";
 import Language from "./components/settings/Language";
 import Currency from "./components/settings/Currency";
+import Balance from "./components/settings/Balance";
 import PrivateKey from "./components/settings/PrivateKey";
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Keypad />} />
           <Route path="/payScreen" element={<PayScreen />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/balance" element={<Balance />} />
           <Route path="/settings/language" element={<Language />} />
           <Route path="/settings/currency" element={<Currency />} />
           <Route path="/settings/private-key" element={<PrivateKey />} />

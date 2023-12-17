@@ -5,6 +5,11 @@ import { invoke } from '@tauri-apps/api/tauri';
 
 const pages = [
   {
+    title: 'Balance',
+    path: '#/settings/balance',
+    hook: 'balance',
+  },
+  {
     title: 'Language',
     path: '#/settings/language',
     hook: 'language',
@@ -17,7 +22,7 @@ const pages = [
   {
     title: 'Private Key',
     path: '#/settings/private-key',
-    hook: 'privateKey',
+    hook: 'publicKey',
 
   },
 ];
@@ -27,7 +32,7 @@ const Settings = () => {
   const [settings, setSettings] = useState({
     language: '',
     currency: '',
-    privateKey: '',
+    publicKey: '',
   });
 
   useEffect(() => {
@@ -42,6 +47,15 @@ const Settings = () => {
         setSettings(prevSettings => ({
           ...prevSettings,
           language: savedLanguage,
+        }));
+      }
+    });
+
+    invoke('get_public_key').then(savedPublicKey => {
+      if (savedPublicKey) {
+        setSettings(prevSettings => ({
+          ...prevSettings,
+          publicKey: savedPublicKey,
         }));
       }
     });

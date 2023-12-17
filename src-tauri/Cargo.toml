@@ -25,6 +25,7 @@ chrono = "0.4.31"
 tiny-bip39 = "0.8.0"  
 zeroize = "^1.0.0"
 solana-program = "1.17.11"
+bs58 = "0.5.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

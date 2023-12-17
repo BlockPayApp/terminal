@@ -690,6 +690,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "771fe0050b883fcc3ea2359b1a96bcfbc090b7116eae7c3c512c7a083fdf23d3"
 
 [[package]]
+name = "bs58"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5353f36341f7451062466f0b755b96ac3a9547e4d7f6b70d603fc721a7d7896"
+dependencies = [
+ "tinyvec",
+]
+
+[[package]]
 name = "bstr"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4581,7 +4590,7 @@ dependencies = [
  "Inflector",
  "base64 0.21.5",
  "bincode",
- "bs58",
+ "bs58 0.4.0",
  "bv",
  "lazy_static",
  "serde",
@@ -4691,7 +4700,7 @@ dependencies = [
  "ahash 0.8.6",
  "blake3",
  "block-buffer 0.10.4",
- "bs58",
+ "bs58 0.4.0",
  "bv",
  "byteorder",
  "cc",
@@ -4827,7 +4836,7 @@ dependencies = [
  "blake3",
  "borsh 0.10.3",
  "borsh 0.9.3",
- "bs58",
+ "bs58 0.4.0",
  "bv",
  "bytemuck",
  "cc",
@@ -4983,7 +4992,7 @@ dependencies = [
  "async-trait",
  "base64 0.21.5",
  "bincode",
- "bs58",
+ "bs58 0.4.0",
  "indicatif",
  "log",
  "reqwest",
@@ -5007,7 +5016,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c55728acd01f4c292a15137788caff197d0cab4ac66e9cd1120dd42396f31ba"
 dependencies = [
  "base64 0.21.5",
- "bs58",
+ "bs58 0.4.0",
  "jsonrpc-core",
  "reqwest",
  "semver",
@@ -5046,7 +5055,7 @@ dependencies = [
  "bincode",
  "bitflags 2.4.1",
  "borsh 0.10.3",
- "bs58",
+ "bs58 0.4.0",
  "bytemuck",
  "byteorder",
  "chrono",
@@ -5095,7 +5104,7 @@ version = "1.17.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44b506d09af58e14f389823d4be966cc98f8c0aad5042f996122b5f3e09bef5a"
 dependencies = [
- "bs58",
+ "bs58 0.4.0",
  "proc-macro2",
  "quote",
  "rustversion",
@@ -5183,7 +5192,7 @@ dependencies = [
  "base64 0.21.5",
  "bincode",
  "borsh 0.10.3",
- "bs58",
+ "bs58 0.4.0",
  "lazy_static",
  "log",
  "serde",
@@ -5980,6 +5989,7 @@ dependencies = [
 name = "terminal"
 version = "0.0.0"
 dependencies = [
+ "bs58 0.5.0",
  "chrono",
  "clap 4.4.11",
  "ring 0.17.7",

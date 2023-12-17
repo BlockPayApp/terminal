@@ -10,7 +10,9 @@ use solana_sdk::{
     clock::Clock,
     commitment_config::CommitmentConfig,
     native_token::lamports_to_sol,
-    signature::{keypair_from_seed, write_keypair_file},
+    signature::{keypair_from_seed, 
+        write_keypair_file, 
+        Keypair},
     signer::Signer,
     sysvar,
 };
@@ -23,13 +25,14 @@ use solana_program::{
     rent::Rent,
     sysvar::Sysvar,
 };
+use bs58;
 
 
 const SETTINGS_PATH: &str = "./../settings.json";
 
+
 #[tauri::command]
 fn get_language() -> String {
-    println!("Gettin language");
     if Path::new(SETTINGS_PATH).exists() {
         let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
         let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
@@ -43,9 +46,40 @@ fn get_language() -> String {
 }
 
 #[tauri::command]
+fn get_public_key() -> String {
+    if Path::new(SETTINGS_PATH).exists() {
+        let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
+        let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
+        settings["public_key"]
+            .as_str()
+            .map(|s| s.to_string())
+            .unwrap_or("".to_string())
+    } else {
+        "".to_string()
+    }
+}
+
+#[tauri::command]
+fn get_balance() -> String {
+    let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
+    let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
+
+    let seed_base58 = settings["seed"].as_str().unwrap();
+
+    let keypair = Keypair::from_base58_string(&seed_base58);
+
+    let rpc_client = solana_client::rpc_client::RpcClient::new(
+        "http://localhost:8899".to_string(),
+    );    
+
+    let balance = rpc_client
+        .get_balance(&keypair.pubkey())
+        .expect("get_balance");
+    lamports_to_sol(balance).to_string()
+}
+
+#[tauri::command]
 fn save_language(language: &str) -> String {
-    println!("Saving language: {}", language);
-    print!("Saving language: {}", language);
     let mut settings = if Path::new(SETTINGS_PATH).exists() {
         serde_json::from_str(&fs::read_to_string(SETTINGS_PATH).unwrap()).unwrap()
     } else {
@@ -70,16 +104,16 @@ fn save_passphrase(passphrase: &str) {
         json!({})
     };
 
-    settings["seed"] = json!(seed.as_bytes());
-    let settings = settings.to_string();
-    let mut file = File::create(SETTINGS_PATH).unwrap();
-    file.write_all(settings.as_bytes()).unwrap();
-
     let keypair = keypair_from_seed(seed.as_bytes()).unwrap();
     println!("Mnemonic: {:?}", mnemonic);
     println!("Public key: {}", &keypair.pubkey());
 
-    // Get balance for this account
+    settings["seed"] = json!(keypair.to_base58_string());
+    settings["public_key"] = json!(keypair_from_seed(seed.as_bytes()).unwrap().pubkey().to_string());
+    let settings = settings.to_string();
+    let mut file = File::create(SETTINGS_PATH).unwrap();
+    file.write_all(settings.as_bytes()).unwrap();
+
     let rpc_client = solana_client::rpc_client::RpcClient::new(
         "http://localhost:8899".to_string(),
     );
@@ -103,19 +137,12 @@ fn save_passphrase(passphrase: &str) {
     let (recent_blockhash, _fee_calculator) = rpc_client.get_recent_blockhash().unwrap();
     transaction.sign(&[&keypair], recent_blockhash);
 
-    // let result = rpc_client
-    //     .send_and_confirm_transaction_with_commitment(
-    //         &transaction,
-    //         CommitmentConfig::confirmed(),
-    //     );
-
     let result = rpc_client.send_and_confirm_transaction_with_spinner(&transaction);
 
     match result {
         Ok(_) => println!("Transaction succeeded"),
         Err(err) => eprintln!("Transaction failed: {:?}", err),
     }
-
 
     let balance = rpc_client
         .get_balance(&keypair.pubkey())
@@ -128,7 +155,9 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![save_language, 
             get_language,
-            save_passphrase,])
+            save_passphrase,
+            get_public_key,
+            get_balance])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
