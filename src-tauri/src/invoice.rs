@@ -35,13 +35,13 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
     let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
     let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
 
-    let seed_base58 = settings["seed"].as_str().unwrap();
+    // let seed_base58 = settings["seed"].as_str().unwrap();
 
-    let keypair = Keypair::from_base58_string(&seed_base58);
+    // let keypair = Keypair::from_base58_string(&seed_base58);
 
-    let rpc_client = solana_client::rpc_client::RpcClient::new(
-        "http://localhost:8899".to_string(),
-    );
+    // let rpc_client = solana_client::rpc_client::RpcClient::new(
+    //     "http://localhost:8899".to_string(),
+    // );
 
     let url = format!("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
     let resp = reqwest::blocking::get(&url).unwrap().text().unwrap();
@@ -74,7 +74,7 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
       .as_secs();
 
     let invoice_id = timestamp.to_string().chars().rev().take(5).collect::<String>();
-    let address = keypair.pubkey().to_string();
+    let address = settings["public_key"].as_str().unwrap();
     
     let invoice = json!({
         "invoice_id": activation_id.to_owned()+&invoice_id,
@@ -84,15 +84,15 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         "currency": "PLN",
         "status": "pending",
         "created_at": timestamp,
-        "updated_at": timestamp,
+        "updated_at": timestamp
     });
     
     let connection = &mut establish_connection();
-    let invoice = create_invoice(
+    let invoice_db = create_invoice(
         connection,
         &(activation_id.parse::<i64>().unwrap() + invoice_id.parse::<i64>().unwrap()), // converted to &i64
         &(amount as f32), // converted to &f32
-        address.as_str(), // converted to &str
+        address, // converted to &str
         &(price as f32), // converted to &f32
         "PLN",
         "pending",
@@ -100,5 +100,5 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         &(timestamp as i64), // converted to &i64
     );
 
-    return invoice.into();
+    return invoice.into(); 
 }

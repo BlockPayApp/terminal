@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@solana/pay": "^0.2.5",
+    "@solana/web3.js": "^1.87.6",
     "@tauri-apps/api": "^1.5.1",
     "antd": "^5.12.2",
+    "bignumber.js": "^9.1.2",
+    "qr-code-styling": "^1.6.0-rc.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.20.1",
