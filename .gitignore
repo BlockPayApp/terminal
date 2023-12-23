@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 settings.json
+db.sqlite
 test-ledger

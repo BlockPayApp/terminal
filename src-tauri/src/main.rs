@@ -1,155 +1,20 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use serde_json::json;
-use std::fs::{self, File};
-use std::io::Write;
-use std::path::Path;
-use bip39::{Language, Mnemonic, MnemonicType, Seed};
-use solana_sdk::{
-    account::from_account,
-    clock::Clock,
-    commitment_config::CommitmentConfig,
-    native_token::lamports_to_sol,
-    signature::{keypair_from_seed, 
-        write_keypair_file, 
-        Keypair},
-    signer::Signer,
-    sysvar,
-};
-use solana_program::{
-    account_info::AccountInfo,
-    entrypoint,
-    entrypoint::ProgramResult,
-    msg,
-    pubkey::Pubkey,
-    rent::Rent,
-    sysvar::Sysvar,
-};
-use bs58;
+use terminal::language::{save_language, get_language};
+use terminal::{__cmd__save_language, __cmd__get_language};
 
+use terminal::passphrase::{save_passphrase, get_public_key};
+use terminal::{__cmd__save_passphrase, __cmd__get_public_key};
 
-const SETTINGS_PATH: &str = "./../settings.json";
+use terminal::balance::{get_balance};
+use terminal::{__cmd__get_balance};
 
+use terminal::invoice::{new_invoice};
+use terminal::{__cmd__new_invoice};
 
-#[tauri::command]
-fn get_language() -> String {
-    if Path::new(SETTINGS_PATH).exists() {
-        let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
-        let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
-        settings["language"]
-            .as_str()
-            .map(|s| s.to_string())
-            .unwrap_or("".to_string())
-    } else {
-        "".to_string()
-    }
-}
+use terminal::power_on::{power_on};
+use terminal::{__cmd__power_on};
 
-#[tauri::command]
-fn get_public_key() -> String {
-    if Path::new(SETTINGS_PATH).exists() {
-        let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
-        let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
-        settings["public_key"]
-            .as_str()
-            .map(|s| s.to_string())
-            .unwrap_or("".to_string())
-    } else {
-        "".to_string()
-    }
-}
-
-#[tauri::command]
-fn get_balance() -> String {
-    let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
-    let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
-
-    let seed_base58 = settings["seed"].as_str().unwrap();
-
-    let keypair = Keypair::from_base58_string(&seed_base58);
-
-    let rpc_client = solana_client::rpc_client::RpcClient::new(
-        "http://localhost:8899".to_string(),
-    );    
-
-    let balance = rpc_client
-        .get_balance(&keypair.pubkey())
-        .expect("get_balance");
-    lamports_to_sol(balance).to_string()
-}
-
-#[tauri::command]
-fn save_language(language: &str) -> String {
-    let mut settings = if Path::new(SETTINGS_PATH).exists() {
-        serde_json::from_str(&fs::read_to_string(SETTINGS_PATH).unwrap()).unwrap()
-    } else {
-        json!({})
-    };
-    settings["language"] = json!(language);
-    let settings = settings.to_string();
-    let mut file = File::create(SETTINGS_PATH).unwrap();
-    file.write_all(settings.as_bytes()).unwrap();
-    "Language saved successfully".to_string()
-}
-
-#[tauri::command]
-fn save_passphrase(passphrase: &str) {
-    let mnemonic = Mnemonic::from_phrase(passphrase, Language::English).unwrap();
-
-    let seed = Seed::new(&mnemonic, "");
-
-    let mut settings = if Path::new(SETTINGS_PATH).exists() {
-        serde_json::from_str(&fs::read_to_string(SETTINGS_PATH).unwrap()).unwrap()
-    } else {
-        json!({})
-    };
-
-    let keypair = keypair_from_seed(seed.as_bytes()).unwrap();
-    println!("Mnemonic: {:?}", mnemonic);
-    println!("Public key: {}", &keypair.pubkey());
-
-    settings["seed"] = json!(keypair.to_base58_string());
-    settings["public_key"] = json!(keypair_from_seed(seed.as_bytes()).unwrap().pubkey().to_string());
-    let settings = settings.to_string();
-    let mut file = File::create(SETTINGS_PATH).unwrap();
-    file.write_all(settings.as_bytes()).unwrap();
-
-    let rpc_client = solana_client::rpc_client::RpcClient::new(
-        "http://localhost:8899".to_string(),
-    );
-    let balance = rpc_client
-        .get_balance(&keypair.pubkey())
-        .expect("get_balance");
-    println!("Balance: {} SOL", lamports_to_sol(balance));
-
-    let to_address = "7nnaPYYRwnNrEHi17LgVxLUJp59eYsdJeL3wLNDdHhnL";
-    let to_pubkey = to_address.parse::<Pubkey>().unwrap();
-
-    let mut transaction = solana_sdk::transaction::Transaction::new_with_payer(
-        &[solana_program::system_instruction::transfer(
-            &keypair.pubkey(),
-            &to_pubkey,
-            1_000_000_000, // 1 SOL in lamports
-        )],
-        Some(&keypair.pubkey()),
-    );
-
-    let (recent_blockhash, _fee_calculator) = rpc_client.get_recent_blockhash().unwrap();
-    transaction.sign(&[&keypair], recent_blockhash);
-
-    let result = rpc_client.send_and_confirm_transaction_with_spinner(&transaction);
-
-    match result {
-        Ok(_) => println!("Transaction succeeded"),
-        Err(err) => eprintln!("Transaction failed: {:?}", err),
-    }
-
-    let balance = rpc_client
-        .get_balance(&keypair.pubkey())
-        .expect("get_balance");
-    println!("Balance: {} SOL", lamports_to_sol(balance));
-
-}
 
 fn main() {
     tauri::Builder::default()
@@ -157,7 +22,9 @@ fn main() {
             get_language,
             save_passphrase,
             get_public_key,
-            get_balance])
+            get_balance,
+            new_invoice,
+            power_on,])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

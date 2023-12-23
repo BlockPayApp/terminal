@@ -16,7 +16,7 @@ const Keypad = () => {
 
   const handleConfirmClick = () => {
     console.log('Entered price:', price);
-    location.hash = '#/payScreen'; 
+    location.hash = `#/payScreen/${price}`;
   };
 
   const goToSettings = () => {

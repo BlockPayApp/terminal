@@ -1,4 +1,5 @@
 import "./App.css";
+import React, { useEffect } from "react";
 import Keypad from "./components/keypad/Keypad";
 import PayScreen from "./components/payScreen/PayScreen";
 import Settings from "./components/settings/Settings";
@@ -7,6 +8,7 @@ import Currency from "./components/settings/Currency";
 import Balance from "./components/settings/Balance";
 import PrivateKey from "./components/settings/PrivateKey";
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { invoke } from "@tauri-apps/api";
 
 function App() {
   const containerStyle = {
@@ -19,12 +21,16 @@ function App() {
     left: 0,
   }
 
+  useEffect(() => {
+    invoke('power_on');
+  }, []);
+
   return (
     <div style={containerStyle}>
       <Router>
         <Routes>
           <Route path="/" element={<Keypad />} />
-          <Route path="/payScreen" element={<PayScreen />} />
+          <Route path="/payScreen/:price" element={<PayScreen />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/balance" element={<Balance />} />
           <Route path="/settings/language" element={<Language />} />
