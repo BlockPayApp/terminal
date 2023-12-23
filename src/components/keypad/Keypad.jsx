@@ -4,19 +4,19 @@ import { Input, Button, Row, Col } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 
 const Keypad = () => {
-  const [price, setPrice] = useState(0);
+  const [amount, setAmount] = useState(0);
 
   const handleNumberClick = (number) => {
-    setPrice(prevPrice => prevPrice * 10 + Number(number));
+    setAmount(prevAmount => prevAmount* 10 + Number(number));
   };
 
   const handleClearClick = () => {
-    setPrice(prevPrice => Math.floor(prevPrice / 10));
+    setAmount(prevPrice => Math.floor(prevPrice / 10));
   };
 
   const handleConfirmClick = () => {
-    console.log('Entered price:', price);
-    location.hash = `#/payScreen/${price}`;
+    console.log('Entered amount:', amount);
+    location.hash = `#/payScreen/${amount}`;
   };
 
   const goToSettings = () => {
@@ -79,7 +79,7 @@ const Keypad = () => {
       <Button icon={<SettingOutlined />} size={'large'} onClick={goToSettings} style={settingsButtonStyle} />
       <div style={contentStyle}>
         <h1 style={logoStyle}>Tutaj będzie logo</h1>
-        <Input value={(price / 100).toFixed(2) + ' zł'} style={inputStyle} disabled />
+        <Input value={(amount / 100).toFixed(2) + ' zł'} style={inputStyle} disabled />
         <Row gutter={[8, 8]}>
           <Col span={8}>
             <Button block style={buttonStyle} size={'large'} onClick={() => handleNumberClick('1')}>1</Button>

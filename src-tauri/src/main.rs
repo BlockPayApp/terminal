@@ -1,5 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+use std::env;
 use terminal::language::{save_language, get_language};
 use terminal::{__cmd__save_language, __cmd__get_language};
 
@@ -17,6 +18,7 @@ use terminal::{__cmd__power_on};
 
 
 fn main() {
+    env::set_var("RUST_BACKTRACE", "full");
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![save_language, 
             get_language,

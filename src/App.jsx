@@ -30,7 +30,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Keypad />} />
-          <Route path="/payScreen/:price" element={<PayScreen />} />
+          <Route path="/payScreen/:amount" element={<PayScreen />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/balance" element={<Balance />} />
           <Route path="/settings/language" element={<Language />} />

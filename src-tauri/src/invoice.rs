@@ -31,7 +31,7 @@ use crate::create_invoice;
 const SETTINGS_PATH: &str = "./../settings.json";
 
 #[tauri::command]
-pub fn new_invoice(amount: u64) -> serde_json::Value {
+pub fn new_invoice(amount: i64) -> serde_json::Value {
     let settings = fs::read_to_string(SETTINGS_PATH).unwrap();
     let settings: serde_json::Value = serde_json::from_str(&settings).unwrap();
 
@@ -50,9 +50,22 @@ pub fn new_invoice(amount: u64) -> serde_json::Value {
     let forex_url = format!("https://open.er-api.com/v6/latest/USD");
     let forex_resp = reqwest::blocking::get(&forex_url).unwrap().text().unwrap();
     let forex_resp: serde_json::Value = serde_json::from_str(&forex_resp).unwrap();
-    let forex_rate = forex_resp["rates"]["PLN"].as_f64().unwrap();
 
-    let price = resp["price"].as_f64().unwrap() * forex_rate;
+    let forex_rate_str = forex_resp["rates"]["PLN"].to_string();
+    let forex_rate: f32 = forex_rate_str.parse().unwrap();
+
+    let price_str = resp["price"].to_string();
+    let price_str_rounded = &price_str[1..price_str.len()-5];
+
+    println!("forex_rate_str: {}", forex_rate_str);
+    println!("forex_rate: {}", forex_rate);
+    println!("price_str: {}", price_str_rounded);
+
+    let float_price: f32 = price_str_rounded.parse().unwrap();
+    println!("5");
+
+    println!("{}", float_price);
+    let price = float_price * forex_rate;
 
     let activation_id = settings["activation_id"].as_str().unwrap();
     let timestamp = SystemTime::now()

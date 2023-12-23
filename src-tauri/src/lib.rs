@@ -11,7 +11,7 @@ pub mod power_on;
 use diesel::sqlite::SqliteConnection;
 use diesel::prelude::*;
 
-const DATABASE_URL: &str ="./../db.sqlite";
+const DATABASE_URL: &str ="./db.sqlite";
 
 pub fn establish_connection() -> SqliteConnection {
   SqliteConnection::establish(&DATABASE_URL)
@@ -19,6 +19,7 @@ pub fn establish_connection() -> SqliteConnection {
 }
 
 use self::models::{NewInvoice, Invoice};
+use schema::invoices;
 
 pub fn create_invoice(conn: &mut SqliteConnection, 
   invoice_id: &i64, 
@@ -29,7 +30,6 @@ pub fn create_invoice(conn: &mut SqliteConnection,
   status: &str, 
   created_at: &i64, 
   updated_at: &i64) {
-  use schema::invoices;
 
   let new_invoice = NewInvoice {
     invoice_id,

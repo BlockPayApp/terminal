@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api';
 
 const PayScreen = () => {
-  const { price } = useParams();
+  const { amount } = useParams();
+
+  useEffect(() => {
+    console.log('Entered amount:', amount);
+    invoke('new_invoice', { amount: Number(amount) }).then(invoice => {
+      console.log('Got invoice:', invoice);
+    });
+  }, []);
 
   const goBack = () => {
     location.hash = '#/'; 
@@ -20,7 +28,7 @@ const PayScreen = () => {
   return (
     <div style={containerStyle}>
       <Button icon={<LeftOutlined />} size={'large'} onClick={goBack} style={{ position: 'absolute', left: 0, top: 0 }} />
-      <h1 style={{color: 'black'}}>Payment {price}</h1>
+      <h1 style={{color: 'black'}}>Payment {amount}</h1>
     </div>
   );
 };
