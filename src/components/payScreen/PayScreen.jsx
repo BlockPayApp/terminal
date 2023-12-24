@@ -42,21 +42,25 @@ const PayScreen = () => {
     invoke('new_invoice', { amount: Number(amount) }).then(invoice => {
       console.log('Got invoice:', invoice);
       setPayData(invoice);
-      qrCode.append(ref.current);
-      qrCode.update({
-        data: `solana:${invoice["address"]}?amount=${invoice["price"]}&memo=${invoice["invoice_id"]}`
-      });
-  });
 
-    setAfterRender(false);
+      setAfterRender(false);
+    });
   }, [afterRender]);
-  
+
   useEffect(() => {
-      setAfterRender(true);
+    if (!payData) return;
+    qrCode.update({
+      data: `solana:${payData["address"]}?amount=${payData["price"]}&memo=${payData["invoice_id"]}`
+    });
+    qrCode.append(ref.current);
+  }, [payData]);
+
+  useEffect(() => {
+    setAfterRender(true);
   }, [rerender]);
 
   const goBack = () => {
-    location.hash = '#/'; 
+    location.hash = '#/';
   };
 
   const containerStyle = {
@@ -70,12 +74,12 @@ const PayScreen = () => {
     <div style={containerStyle}>
       {setRerender}
       <Button icon={<LeftOutlined />} size={'large'} onClick={goBack} style={{ position: 'absolute', left: 0, top: 0 }} />
-      <h1 style={{color: 'black'}}>Loading...</h1>
+      <h1 style={{ color: 'black' }}>Loading...</h1>
     </div>
-   ) : (
+  ) : (
     <div style={containerStyle}>
       <Button icon={<LeftOutlined />} size={'large'} onClick={goBack} style={{ position: 'absolute', left: 0, top: 0 }} />
-      <h1 style={{color: 'black'}}>Payment {amount}</h1>
+      <h1 style={{ color: 'black' }}>Payment {amount}</h1>
       <div ref={ref} />
     </div>
   );

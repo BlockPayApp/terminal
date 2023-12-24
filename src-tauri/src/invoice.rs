@@ -65,13 +65,16 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
     println!("5");
 
     println!("{}", float_price);
-    let price = float_price * forex_rate;
+    let amount_float: f32 = (amount as f32)/100.0;
+    let price = amount_float / (float_price * forex_rate);
+
+    let solpln = float_price * forex_rate;
 
     let activation_id = settings["activation_id"].as_str().unwrap();
     let timestamp = SystemTime::now()
-      .duration_since(UNIX_EPOCH)
-      .unwrap()
-      .as_secs();
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
 
     let invoice_id = timestamp.to_string().chars().rev().take(5).collect::<String>();
     let address = settings["public_key"].as_str().unwrap();
@@ -81,6 +84,7 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         "amount": amount,
         "address": address,
         "price": price,
+        "solpln": solpln,
         "currency": "PLN",
         "status": "pending",
         "created_at": timestamp,
@@ -95,6 +99,7 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         address, // converted to &str
         &(price as f32), // converted to &f32
         "PLN",
+        &(solpln as f32), // converted to &f32
         "pending",
         &(timestamp as i64), // converted to &i64
         &(timestamp as i64), // converted to &i64
