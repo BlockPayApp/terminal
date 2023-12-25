@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api';
 import QRCodeStyling from "qr-code-styling";
 import logo from './../../assets/banapay-circle.png';
-import { encodeURL, createQR } from '@solana/pay';
+import solana from './../../assets/solana.jpg';
 
 const qrCode = new QRCodeStyling({
   width: 400,
@@ -23,15 +23,14 @@ const qrCode = new QRCodeStyling({
     crossOrigin: "anonymous",
     margin: 10,
     imageSize: 0.4,
-    // hideBackgroundDots: false
   }
 });
 
 const PayScreen = () => {
   const [payData, setPayData] = useState();
-  // const [qrCode, setQrCode] = useState();
   const [rerender, setRerender] = useState();
   const [afterRender, setAfterRender] = useState();
+  const [formattedAddress, setFormattedAddress] = useState();
   const ref = useRef(null);
 
   const { amount } = useParams();
@@ -49,6 +48,7 @@ const PayScreen = () => {
 
   useEffect(() => {
     if (!payData) return;
+    setFormattedAddress(`${payData["address"].substring(0, 4)}...${payData["address"].substring(payData["address"].length - 4)}`);
     qrCode.update({
       data: `solana:${payData["address"]}?amount=${payData["price"]}&memo=${payData["invoice_id"]}`
     });
@@ -70,6 +70,45 @@ const PayScreen = () => {
     top: 0
   }
 
+  const qrCodeStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+
+  const solanaLogoStyle = {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    marginRight: 10
+  }
+  
+  const detailsStyle = {
+    width: 400,
+    height: 70,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex'
+  }
+
+  const detailsBlockStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+  }
+
+  const priceDetailsStyle = {
+    ...detailsBlockStyle,
+    float: 'right',
+    marginLeft: 'auto',
+    //center vertically
+    marginTop: 'auto',
+    marginBottom: 'auto'
+  }
+
   return !payData ? (
     <div style={containerStyle}>
       {setRerender}
@@ -79,8 +118,20 @@ const PayScreen = () => {
   ) : (
     <div style={containerStyle}>
       <Button icon={<LeftOutlined />} size={'large'} onClick={goBack} style={{ position: 'absolute', left: 0, top: 0 }} />
-      <h1 style={{ color: 'black' }}>Payment {amount}</h1>
-      <div ref={ref} />
+      <h1 style={{ color: 'black' }}>Payment</h1>
+      <div ref={ref} style={qrCodeStyle} />
+      <div style={detailsStyle}>
+        <img src={solana} alt="Solana" style={solanaLogoStyle} />
+        <div style={detailsBlockStyle}>
+          <div style={{ color: 'black', fontWeight: 600 }}>Addr: {formattedAddress}</div>
+          <div style={{ color: 'black' }}>Memo: {payData["invoice_id"]}</div>
+          <div style={{ color: 'black' }}>1 SOL = {payData["solpln"].toFixed(2)} PLN</div>
+        </div>
+        <div style={priceDetailsStyle}>
+          <div style={{ color: 'black', fontWeight: 600 }}>{payData["price"].toFixed(6)} SOL</div>
+          <div style={{ color: 'black' }}>{amount/100} PLN</div>
+        </div>
+      </div>
     </div>
   );
 };
