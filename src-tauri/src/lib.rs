@@ -7,6 +7,7 @@ pub mod passphrase;
 pub mod balance;
 pub mod invoice;
 pub mod power_on;
+pub mod listen;
 
 use diesel::sqlite::SqliteConnection;
 use diesel::prelude::*;

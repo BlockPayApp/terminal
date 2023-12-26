@@ -3,6 +3,7 @@ import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api';
+import { listen } from '@tauri-apps/api/event';
 import QRCodeStyling from "qr-code-styling";
 import logo from './../../assets/banapay-circle.png';
 import solana from './../../assets/solana.jpg';
@@ -53,7 +54,13 @@ const PayScreen = () => {
       data: `solana:${payData["address"]}?amount=${payData["price"]}&memo=${payData["invoice_id"]}`
     });
     qrCode.append(ref.current);
+
+    invoke('listen', { memo: payData["invoice_id"] })
   }, [payData]);
+
+  listen('listen_got', (event) => {
+    console.log('Received event:', event);
+  });
 
   useEffect(() => {
     setAfterRender(true);

@@ -16,6 +16,9 @@ use terminal::{__cmd__new_invoice};
 use terminal::power_on::{power_on};
 use terminal::{__cmd__power_on};
 
+use terminal::listen::{listen};
+use terminal::{__cmd__listen};
+
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");
@@ -26,7 +29,8 @@ fn main() {
             get_public_key,
             get_balance,
             new_invoice,
-            power_on,])
+            power_on,
+            listen])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
