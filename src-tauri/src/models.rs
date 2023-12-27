@@ -2,7 +2,7 @@ use diesel::prelude::*;
 use crate::schema::invoices;
 
 #[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::schema::invoices)]
+#[diesel(table_name = invoices)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Invoice {
   pub invoice_id: i64,

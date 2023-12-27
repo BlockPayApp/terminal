@@ -76,11 +76,11 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         .unwrap()
         .as_secs();
 
-    let invoice_id = timestamp.to_string().chars().rev().take(5).collect::<String>();
+    let invoice_id = (activation_id.to_owned() + &(timestamp.to_string().chars().rev().take(5).collect::<String>()));
     let address = settings["public_key"].as_str().unwrap();
     
     let invoice = json!({
-        "invoice_id": activation_id.to_owned()+&invoice_id,
+        "invoice_id": invoice_id,
         "amount": amount,
         "address": address,
         "price": price,
@@ -91,10 +91,11 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
         "updated_at": timestamp
     });
     
+    let invoice_id = invoice_id.parse::<i64>().unwrap();
     let connection = &mut establish_connection();
     let invoice_db = create_invoice(
         connection,
-        &(activation_id.parse::<i64>().unwrap() + invoice_id.parse::<i64>().unwrap()), // converted to &i64
+        &invoice_id,
         &(amount as f32), // converted to &f32
         address, // converted to &str
         &(price as f32), // converted to &f32
