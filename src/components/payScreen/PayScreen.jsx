@@ -60,6 +60,11 @@ const PayScreen = () => {
 
   listen('listen_got', (event) => {
     console.log('Received event:', event);
+    if (event.payload == "Completed") {
+      location.hash = '#/payScreen/success/' + payData["invoice_id"];
+    } else {
+      location.hash = '#/payScreen/failure' + payData["invoice_id"];
+    }
   });
 
   useEffect(() => {
