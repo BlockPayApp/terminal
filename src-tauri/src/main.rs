@@ -10,8 +10,8 @@ use terminal::{__cmd__save_passphrase, __cmd__get_public_key};
 use terminal::balance::{get_balance};
 use terminal::{__cmd__get_balance};
 
-use terminal::invoice::{new_invoice};
-use terminal::{__cmd__new_invoice};
+use terminal::invoice::{new_invoice, get_invoice};
+use terminal::{__cmd__new_invoice, __cmd__get_invoice};
 
 use terminal::power_on::{power_on};
 use terminal::{__cmd__power_on};
@@ -29,6 +29,7 @@ fn main() {
             get_public_key,
             get_balance,
             new_invoice,
+            get_invoice,
             power_on,
             listen])
         .run(tauri::generate_context!())

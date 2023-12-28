@@ -49,5 +49,11 @@ pub fn create_invoice(conn: &mut SqliteConnection,
     .values(&new_invoice)
     .execute(conn)
     .expect("Error saving new invoice");
+}
 
+pub fn get_invoice_by_id(conn: &mut SqliteConnection, invoice_id: &i64) -> Invoice {
+  invoices::table
+    .find(invoice_id)
+    .first::<Invoice>(conn)
+    .expect("Error loading invoice")
 }

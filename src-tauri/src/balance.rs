@@ -37,8 +37,8 @@ pub fn get_balance() -> String {
     let keypair = Keypair::from_base58_string(&seed_base58);
 
     let rpc_client = solana_client::rpc_client::RpcClient::new(
-        "http://localhost:8899".to_string(),
-    );    
+        "https://api.devnet.solana.com".to_string(),
+    );
 
     let balance = rpc_client
         .get_balance(&keypair.pubkey())

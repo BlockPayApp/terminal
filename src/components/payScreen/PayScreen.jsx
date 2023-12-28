@@ -7,6 +7,7 @@ import { listen } from '@tauri-apps/api/event';
 import QRCodeStyling from "qr-code-styling";
 import logo from './../../assets/banapay-circle.png';
 import solana from './../../assets/solana.jpg';
+import LoadingScreen from './../loadingScreen/LoadingScreen';
 
 const qrCode = new QRCodeStyling({
   width: 400,
@@ -126,6 +127,7 @@ const PayScreen = () => {
       {setRerender}
       <Button icon={<LeftOutlined />} size={'large'} onClick={goBack} style={{ position: 'absolute', left: 0, top: 0 }} />
       <h1 style={{ color: 'black' }}>Loading...</h1>
+      <LoadingScreen />
     </div>
   ) : (
     <div style={containerStyle}>

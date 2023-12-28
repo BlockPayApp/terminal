@@ -26,7 +26,7 @@ use solana_program::{
 use bs58;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crate::establish_connection;
-use crate::create_invoice;
+use crate::{create_invoice, get_invoice_by_id};
 
 const SETTINGS_PATH: &str = "./../settings.json";
 
@@ -107,4 +107,24 @@ pub fn new_invoice(amount: i64) -> serde_json::Value {
     );
 
     return invoice.into(); 
+}
+
+#[tauri::command]
+pub fn get_invoice(invoice_id: i64) -> serde_json::Value {
+    println!("get_invoice: {}", invoice_id);
+    let conn = &mut establish_connection();
+    let invoice = get_invoice_by_id(conn, &invoice_id); 
+    let invoice_json = json!({
+        "invoice_id": invoice.invoice_id,
+        "amount": invoice.amount,
+        "address": invoice.address,
+        "price": invoice.price,
+        "solpln": invoice.solpln,
+        "currency": invoice.currency,
+        "status": invoice.status,
+        "created_at": invoice.created_at,
+        "updated_at": invoice.updated_at
+    });
+
+    return invoice_json.into();
 }
